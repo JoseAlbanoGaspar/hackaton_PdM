@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  influxdb:
+    image: influxdb:2
+    container_name: influxdb-seminar
+    restart: always
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=admin-seminar3a
+      - DOCKER_INFLUXDB_INIT_ORG=seminar3a
+      - DOCKER_INFLUXDB_INIT_BUCKET=samples
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=seminar3atoken
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+
+  grafana:
+    image: grafana/grafana:9.5.2
+    container_name: grafana-seminar
+    restart: always
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+    ports:
+      - "3000:3000"
+    depends_on:
+      - influxdb
+
+  telegraf:
+    image: telegraf:1.29.1
+    container_name: telegraf-seminar
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
+    restart: always
+    depends_on:
+      - influxdb
+
+volumes:
+  influxdb-data:
