@@ -12,9 +12,10 @@ MQTT_CLIENT_ID = "mqtt_influx_client"
 
 # InfluxDB Configuration
 INFLUXDB_URL = "http://localhost:8086"
+# Token that you need to Generate on InfluxDB UI
 INFLUXDB_TOKEN = "Xx0BUnecqBsp8meuoQpGxaAK4oNKH3AbanCiUApuFmnnaFDMVAQSTGsW21wSBZ78zVYQcX8T9uAPMn1mySVF0A=="
 INFLUXDB_ORG = "seminar3a"
-INFLUXDB_BUCKET = "samples"
+INFLUXDB_BUCKET = "static"
 
 STATIC_KEYS = ["timeStart", "timeEnd", "environmentT", "motorBearingT", "spindleBearingT", "counter", "sdIntensity"]
 ARRAY_KEYS = ["times", "angularVelocity", "force", "displacement"]
@@ -34,7 +35,6 @@ def write_influx(point, bucket):
 
 
 def deal_with_static_data(data):
-
     # Write to InfluxDB
     point = Point("mqtt_data")
     for key, value in data.items():
@@ -66,20 +66,13 @@ def deal_with_vectorial_data(data):
     angular_vel = data['angularVelocity']
     displacements = data['displacement']
     for i in range(len(forces)):
-        #timestamp_ns = int(float(timestamps[i]) * 1e9)
-        
         # Create a point with the value and timestamp
         point = Point("arrays")
-        #point.field("value", float(value))
         point.field("angularVelocity", float(angular_vel[i]))
         point.field("displacement", float(displacements[i]))
         point.field("force", float(forces[i]))
-        #point = point.time(timestamp_ns)
 
-        write_influx(point, "arrays")
-
-        #print(f"Point for bucket '{key}': {point.to_line_protocol()}")
-        
+        write_influx(point, "arrays")        
 
     print("Vectorial data processed and written to InfluxDB.")
 

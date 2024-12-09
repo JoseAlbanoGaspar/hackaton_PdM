@@ -1,0 +1,14 @@
+apiVersion: 1
+datasources:
+  - name: influxdb
+    type: influxdb
+    access: proxy
+    url: http://192.168.11.10:8086
+    isDefault: true
+    database: ""
+    jsonData:
+      organization: "seminar3a"
+      defaultBucket: "static"
+      version: "Flux"
+    secureJsonData:
+      token: "Xx0BUnecqBsp8meuoQpGxaAK4oNKH3AbanCiUApuFmnnaFDMVAQSTGsW21wSBZ78zVYQcX8T9uAPMn1mySVF0A=="

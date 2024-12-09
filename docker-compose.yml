@@ -24,16 +24,17 @@ services:
   grafana:
     image: grafana/grafana:9.5.2
     container_name: grafana-seminar
-    restart: always
+    ports:
+      - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_SECURITY_ALLOW_EMBEDDING=true
     volumes:
-      - ./grafana:/var/lib/grafana/dashboards
-    ports:
-      - "3000:3000"
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    restart: always
     depends_on:
       - influxdb
     networks:

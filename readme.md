@@ -1,25 +1,25 @@
 ## Setup
 
 1. Run `docker-compose up -d influxdb`
-2. Go into [influxdb](http://localhost:8086/) and login with credentials:
+2. Go into [InfluxDB](http://localhost:8086/) and login with credentials:
     - admin
     - admin-seminar3a
 3. Left Bar -> 3rd icon -> API Tokens -> Generate Token
-4. Copy token and Paste on `telegraf.conf -> token`
-5. Run rest of docker containers `docker-compose up -d telegraf grafana`
+4. Left Bar -> 3rd icon -> Buckets -> Create Bucket:
+    - arrays
+    - static
+5. Copy token and Paste on:
+    - `main.py -> INFLUXDB_TOKEN`
+    - `./grafana/provisioning/datasources/datasource.yml -> token`
+6. Run `docker-compose up -d grafana`
+7. Go into [Grafana](http://localhost:3000/) and login with credentials:
+    - admin
+    - admin
+    - Skip new password step
+8. Go to Dashboards.
+
+> **Note:** FEUP Network or VPN required
 
 ## Next Steps
-
-1. Choose a language to code with MQTT -> Python
-2. Create a client MQTT -> Connect to theirs MQTT Broker -> Subscribe topic.
-3. Process Data:
-    - Create new variables
-    - Manage current values
-4. Send it to another topic
-    - e.g. /seminar3a/welding_data
-    - copy this topic to `telegraf.conf -> topics`
-5. Re-run Telegraf on Docker and data will be added to InfluxDB.
-    - Need **VPN connection** to reach MQTT Broker.
-
-## Grafana
-Aula.
+- Perform data analysis on the data based on the **Hackathon** Description
+- Prepare the **PowerPoint**
