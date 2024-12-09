@@ -12,7 +12,7 @@ MQTT_CLIENT_ID = "mqtt_influx_client"
 
 # InfluxDB Configuration
 INFLUXDB_URL = "http://localhost:8086"
-INFLUXDB_TOKEN = "kBF5K3jhvdGDqZlgea1LyLhiPD5ZGqqg_j9neZ7nb2bFODCZ2pr3JRSjZIoK8laZ63wPU8jePKdRYGxTyrhvQg=="
+INFLUXDB_TOKEN = "Xx0BUnecqBsp8meuoQpGxaAK4oNKH3AbanCiUApuFmnnaFDMVAQSTGsW21wSBZ78zVYQcX8T9uAPMn1mySVF0A=="
 INFLUXDB_ORG = "seminar3a"
 INFLUXDB_BUCKET = "samples"
 
