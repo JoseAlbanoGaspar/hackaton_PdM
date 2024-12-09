@@ -12,7 +12,7 @@ MQTT_CLIENT_ID = "mqtt_influx_client"
 
 # InfluxDB Configuration
 INFLUXDB_URL = "http://localhost:8086"
-INFLUXDB_TOKEN = "L2DSxQg4hfegxCQfcINgR7FyBOhXgqHkaFtNm6NTysdEePxRBKa4p5JudaMfsEBi4yojszCa_rFmmUliRvcInQ=="
+INFLUXDB_TOKEN = "kBF5K3jhvdGDqZlgea1LyLhiPD5ZGqqg_j9neZ7nb2bFODCZ2pr3JRSjZIoK8laZ63wPU8jePKdRYGxTyrhvQg=="
 INFLUXDB_ORG = "seminar3a"
 INFLUXDB_BUCKET = "samples"
 
@@ -62,27 +62,24 @@ def deal_with_vectorial_data(data):
             print(f"Error: Length mismatch between 'times' and '{key}' in vectorial data.")
             return
 
-    # Process each key in ARRAY_KEYS (excluding 'times')
-    for key in ARRAY_KEYS:
-        if key == 'times':
-            continue
+    forces = data['force']
+    angular_vel = data['angularVelocity']
+    displacements = data['displacement']
+    for i in range(len(forces)):
+        #timestamp_ns = int(float(timestamps[i]) * 1e9)
+        
+        # Create a point with the value and timestamp
+        point = Point("arrays")
+        #point.field("value", float(value))
+        point.field("angularVelocity", float(angular_vel[i]))
+        point.field("displacement", float(displacements[i]))
+        point.field("force", float(forces[i]))
+        #point = point.time(timestamp_ns)
 
-        if key in data and isinstance(data[key], list):
-            print(f"Processing vectorial data for key: {key}")
+        write_influx(point, "arrays")
 
-            points = []  # List to collect points for batch write
-
-            for i, value in enumerate(data[key]):
-                timestamp_ns = int(float(timestamps[i]) * 1e9)
-                
-                # Create a point with the value and timestamp
-                point = Point(key)
-                point.field("value", float(value))
-                
-                write_influx(point, key)
-
-                #print(f"Point for bucket '{key}': {point.to_line_protocol()}")
-            
+        #print(f"Point for bucket '{key}': {point.to_line_protocol()}")
+        
 
     print("Vectorial data processed and written to InfluxDB.")
 
@@ -128,8 +125,8 @@ def on_message(client, userdata, msg):
         # Assuming payload is in JSON format (adjust parsing for your case)
         data = json.loads(message_payload)
 
-        #deal_with_vectorial_data(data)
         deal_with_extra_features(data)
+        deal_with_vectorial_data(data)
 
     except Exception as e:
         print(f"Failed to process message: {e}")
