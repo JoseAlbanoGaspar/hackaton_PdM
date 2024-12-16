@@ -97,6 +97,9 @@ def deal_with_extra_features(data):
     diff_force_ang = data['times'][start_force] - data['times'][start_ang]
     data['diff_force_ang'] = diff_force_ang
 
+    welding_time = data['times'][end_force] - data['times'][start_ang]
+    data['welding_total_time'] = welding_time
+    
     # add all static data
     deal_with_static_data(data)
 

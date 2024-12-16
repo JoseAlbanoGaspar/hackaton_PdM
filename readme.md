@@ -19,7 +19,3 @@
 8. Go to Dashboards.
 
 > **Note:** FEUP Network or VPN required
-
-## Next Steps
-- Perform data analysis on the data based on the **Hackathon** Description
-- Prepare the **PowerPoint**

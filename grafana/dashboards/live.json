@@ -1,0 +1,405 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 3,
+    "links": [],
+    "liveNow": true,
+    "panels": [
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "P3C6603E967DC8568"
+        },
+        "gridPos": {
+          "h": 2,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 5,
+        "options": {
+          "code": {
+            "language": "plaintext",
+            "showLineNumbers": false,
+            "showMiniMap": false
+          },
+          "content": "# Operator View",
+          "mode": "markdown"
+        },
+        "pluginVersion": "9.5.2",
+        "type": "text"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "P3C6603E967DC8568"
+        },
+        "description": "It shows the welding time of angular velocity, the welding time of force applied, and the difference between both.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "s"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 12,
+          "w": 12,
+          "x": 0,
+          "y": 2
+        },
+        "id": 3,
+        "options": {
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true
+        },
+        "pluginVersion": "9.5.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "uid": "P3C6603E967DC8568"
+            },
+            "query": "from(bucket: \"static\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"mqtt_data\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"welding_time_ang\" or r[\"_field\"] == \"welding_time_force\" or r[\"_field\"] == \"diff_force_ang\" or r[\"_field\"] == \"welding_total_time\")\r\n  |> map(fn: (r) => ({\r\n        r with \r\n        _field: if r[\"_field\"] == \"welding_time_ang\" then \"Spinning Duration\"\r\n                else if r[\"_field\"] == \"welding_time_force\" then \"Pressing Duration\"\r\n                else if r[\"_field\"] == \"diff_force_ang\" then \"Spinning-Force Delay\"\r\n                else if r[\"_field\"] == \"welding_total_time\" then \"Last Operation Duration\"\r\n                else r[\"_field\"]\r\n    }))\r\n",
+            "refId": "A"
+          }
+        ],
+        "title": "Last welding times",
+        "type": "gauge"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "P3C6603E967DC8568"
+        },
+        "description": "Temperatures of environment, motor bearing, and spindle bearing.",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 200
+                },
+                {
+                  "color": "dark-yellow",
+                  "value": 250
+                },
+                {
+                  "color": "green",
+                  "value": 300
+                },
+                {
+                  "color": "dark-yellow",
+                  "value": 380
+                },
+                {
+                  "color": "red",
+                  "value": 400
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 2
+        },
+        "id": 4,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.5.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "uid": "P3C6603E967DC8568"
+            },
+            "query": "from(bucket: \"static\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"mqtt_data\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"motorBearingT\" or r[\"_field\"] == \"environmentT\" or r[\"_field\"] == \"spindleBearingT\")\r\n  |> map(fn: (r) => ({\r\n        r with \r\n        _field: if r[\"_field\"] == \"motorBearingT\" then \"Motor Bearing\"\r\n                else if r[\"_field\"] == \"environmentT\" then \"Environment\"\r\n                else if r[\"_field\"] == \"spindleBearingT\" then \"Spindle Bearing\"\r\n                else r[\"_field\"]\r\n    }))\r\n",
+            "refId": "A"
+          }
+        ],
+        "title": "Last Welding Temperatures",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "P3C6603E967DC8568"
+        },
+        "description": "Arrays Values of Angular Velocity and Force representing each sample",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "noValue": "0",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 12,
+          "w": 12,
+          "x": 12,
+          "y": 10
+        },
+        "id": 1,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "uid": "P3C6603E967DC8568"
+            },
+            "query": "from(bucket: \"arrays\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"arrays\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"angularVelocity\" or r[\"_field\"] == \"force\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: true)\r\n  |> yield(name: \"mean\")",
+            "refId": "A"
+          }
+        ],
+        "title": "Angular Velocity and Forces",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "P3C6603E967DC8568"
+        },
+        "description": "Array Values of Displacement",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "noValue": "0",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 14
+        },
+        "id": 2,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "uid": "P3C6603E967DC8568"
+            },
+            "query": "from(bucket: \"arrays\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"arrays\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"displacement\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: true)\r\n  |> yield(name: \"mean\")",
+            "refId": "A"
+          }
+        ],
+        "title": "Displacement",
+        "type": "timeseries"
+      }
+    ],
+    "refresh": "5s",
+    "schemaVersion": 38,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-5m",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": [
+        "1s",
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ]
+    },
+    "timezone": "",
+    "title": "Welding Machine Live (Last Operation)",
+    "uid": "c01bf88b-6c96-4923-a5a2-d1d9a71a5e4d",
+    "version": 3,
+    "weekStart": ""
+  }
